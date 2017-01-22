@@ -1,4 +1,4 @@
-import java.io.InputStreamReader;
+import java.io.*;
 public class Scanner {
   private Lexer scanner = null;
 
@@ -11,11 +11,16 @@ public class Scanner {
   }
 
   public static void main(String argv[]) {
+
     try {
       Scanner scanner = new Scanner(new Lexer(new InputStreamReader(System.in)));
       Token tok = null;
-      while( (tok=scanner.getNextToken()) != null )
+      PrintWriter out = new PrintWriter("output.txt");
+      while( (tok=scanner.getNextToken()) != null ){
         System.out.println(tok);
+        out.println(tok);
+      }
+      out.close();
     }
     catch (Exception e) {
       System.out.println("Unexpected exception:");

@@ -19,8 +19,15 @@ import java.util.*;
   return null;
 %eofval};
 
-
-   
+blankspace = [ |\r|\n|\t]+
+letter = [a-zA-Z]
+digit = [0-9]
+word = ({letter}|{digit})*{letter}({letter}|{digit})*
+number = ("-"|"+")?{digit}+("."{digit}+)?
+apostrophized = {word}+"'"{word}+("'"{word}+)*
+hyphenApostrophized = ({word}"-"{apostrophized}|{word}"-"{word}"-"{apostrophized})
+hyphen = {word}"-"{word}("-"{word})*
+punctuation = [^ \r\n\ta-zA-Z0-9"<"">"]
 %%
    
 /*
@@ -29,5 +36,21 @@ import java.util.*;
    regular expression. */
    
 
-"OPEN"             { return new Token(Token.OPEN, yytext(), yyline, yycolumn); }
+{blankspace}	{/*Skip over whitespace*/}
+"<"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*">" { 
+												//for(i=0;i<yytext.length();i++) {
+
+												//}
+												return new Token(Token.OPEN, yytext(), yyline, yycolumn); 
+											}
+"</"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*">"	{   
+
+												return new Token(Token.CLOSE, yytext(), yyline, yycolumn); 
+											}									
+{word}										{ return new Token(Token.WORD, yytext(), yyline, yycolumn); }
+{number}									{ return new Token(Token.NUMBER, yytext(), yyline, yycolumn); }
+{apostrophized}								{ return new Token(Token.APOSTROPHIZED, yytext(), yyline, yycolumn); }
+{hyphenApostrophized}						{ return new Token(Token.APOSTROPHIZED, yytext(), yyline, yycolumn); }
+{hyphen}									{ return new Token(Token.HYPHEN, yytext(), yyline, yycolumn); }
+{punctuation}								{ return new Token(Token.PUNCTUATION, yytext(), yyline, yycolumn); }
 
