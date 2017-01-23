@@ -17,8 +17,11 @@ public class Scanner {
       Token tok = null;
       PrintWriter out = new PrintWriter("output.txt");
       while( (tok=scanner.getNextToken()) != null ){
-        System.out.println(tok);
-        out.println(tok);
+        //System.out.println(tok.m_toOutput);
+        //System.out.println(tok);
+        if(tok.m_toOutput == 1){
+          out.println(tok);
+        }
       }
       out.close();
     }

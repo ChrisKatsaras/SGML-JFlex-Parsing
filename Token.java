@@ -13,20 +13,22 @@ class Token {
   public String m_value;
   public int m_line;
   public int m_column;
+  public int m_toOutput;
   
-  Token (int type, String value, int line, int column) {
+  Token (int type, String value, int line, int column, int output) {
     m_type = type;
     m_value = value;
     m_line = line;
     m_column = column;
+    m_toOutput = output;
   }
 
   public String toString() {
     switch (m_type) {
       case OPEN:
-        return "OPEN -" + m_value;
+        return "OPEN-" + m_value;
       case CLOSE:
-        return "CLOSE -" + m_value;  
+        return "CLOSE-" + m_value;  
       case WORD:
         return "WORD(" + m_value + ")";  
       case NUMBER:
@@ -34,7 +36,7 @@ class Token {
       case APOSTROPHIZED:
         return "APOSTROPHIZED(" + m_value + ")";
       case HYPHEN:
-        return "HYPHEN(" + m_value + ")";      
+        return "HYPHENATED(" + m_value + ")";      
       case PUNCTUATION:
         return "PUNCTUATION(" + m_value + ")"; 
       default:
