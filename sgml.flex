@@ -10,10 +10,9 @@ import java.util.*;
 %line
 %column
 
-//Stack for parsing
 %{
-  private static ArrayList<String> stack = new ArrayList<String>();
-  int toOutput;
+  private static ArrayList<String> stack = new ArrayList<String>(); //Stack allows us to keep track of open tags and match them with coresponding close tags
+  int toOutput; //Represents whether or not the token should be written to output.txt
 %};
     
 %eofval{
@@ -30,16 +29,6 @@ hyphenApostrophized = (({letter}|{digit})+"-"{apostrophized}|({letter}|{digit})+
 hyphen = ({letter}|{digit})+"-"({letter}|{digit})+("-"{letter}|{digit})* //Hyphenated words 
 punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that categories above
 
-
-/*blankspace = [ |\r|\n|\t]+ //Whitespace
-letter = [a-zA-Z] //Singular upcase or lowercase letter
-digit = [0-9] //Single digit
-word = ({letter}|{digit})*{letter}({letter}|{digit})* //A string of characters and letters e.g mp3 or 123abc
-number = ("-"|"+")?{digit}+("."{digit}+)? //positive or negative real/integers
-apostrophized = {word}+"'"{word}+("'"{word}+)* //Words with apostrophies e.g O'Rielly 
-hyphenApostrophized = ({word}"-"{apostrophized}|{word}"-"{word}"-"{apostrophized}) //Hyphenated words with apostrophies
-hyphen = ({letter}|{digit})+"-"({letter}|{digit})+("-"{letter}|{digit})* //Hyphenated words 
-punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that categories above*/
 %%
 
 /*
@@ -54,10 +43,12 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 												int i;
 												int begin=0;
 												int end=0;
-												toOutput = 0;
 												String openTag = yytext();
 												String trimmedTag;
-												
+												toOutput = 0;
+
+												//Iterate through open tag until a letter,digit, - or _ is found.
+												//One one is found, this will represent the beginning of the token
 												for(i=0;i<openTag.length();i++) {
 
 													if((openTag.charAt(i) >= 'a' && openTag.charAt(i) <= 'z')) {
@@ -78,6 +69,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 													}
 												}
 
+												//Iterate rest of open tag to find the end which will be signified with either whitespace or >
 												for(i=begin;i<openTag.length();i++) {
 
 													if(openTag.charAt(i) == ' ' || openTag.charAt(i) == '>') {
@@ -85,13 +77,14 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 														break;
 													}	
 												}	
-												trimmedTag = openTag.substring(begin,end);
-												trimmedTag = trimmedTag.toUpperCase();//Ensures that tag name is converted to uppercase
-												//MAKE SURE THIS ACTUALLY WORKS
+												trimmedTag = openTag.substring(begin,end); //Replaces the original token with trimmed version
+												trimmedTag = trimmedTag.toUpperCase(); //Ensures that tag name is converted to uppercase
+												
+												//If the open tag matches any of the relevant tag names, then flag it to be written to output.txt
 												if(trimmedTag.equals("TEXT") || trimmedTag.equals("DATE") || trimmedTag.equals("DOC") || trimmedTag.equals("DOCNO") || trimmedTag.equals("HEADLINE") || trimmedTag.equals("LENGTH")) {
 													toOutput = 1;
 												}
-
+												//If the open tag is <P> then we must check the previous open tag on the stack to ensure it is relevant
 												if(trimmedTag.equals("P")) {
 													String previousTag = stack.get(stack.size()-1);
 													if(previousTag.equals("TEXT") || previousTag.equals("DATE") || previousTag.equals("DOC") || previousTag.equals("DOCNO") || previousTag.equals("HEADLINE") || previousTag.equals("LENGTH")) {
@@ -101,7 +94,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 													}
 												}
 
-												stack.add(trimmedTag);
+												stack.add(trimmedTag); //Push tag to stack
 
 												return new Token(Token.OPEN, trimmedTag, yyline, yycolumn,toOutput); 
 											}
@@ -114,7 +107,9 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 												int tempToOutput = toOutput;
 												String closeTag = yytext();
 												String trimmedTag;
-												
+
+												//Iterate through close tag until a letter,digit, - or _ is found.
+												//One one is found, this will represent the beginning of the token
 												for(i=0;i<closeTag.length();i++) {
 
 													if((closeTag.charAt(i) >= 'a' && closeTag.charAt(i) <= 'z')) {
@@ -135,24 +130,27 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 													}
 												}
 
+												//Iterate rest of close tag to find the end which will be signified with either whitespace or >
 												for(i=begin;i<closeTag.length();i++) {
 
 													if(closeTag.charAt(i) == ' ' || closeTag.charAt(i) == '>') {
 														end = i;
 														break;
 													}	
-												}	
-												trimmedTag = closeTag.substring(begin,end);
-												trimmedTag = trimmedTag.toUpperCase();//Ensures that tag name is converted to uppercase
-												System.out.println(stack.get(stack.size()-1));
-												System.out.println(trimmedTag);
+												}
+
+												trimmedTag = closeTag.substring(begin,end); //Replaces the original token with trimmed version
+												trimmedTag = trimmedTag.toUpperCase(); //Ensures that tag name is converted to uppercase
+												
+												//If the close tag does not match the top open tag on the stack then report error to user
 												if(!stack.get(stack.size()-1).equals(trimmedTag)) {
 													System.out.println("Close tag does NOT match opening tag on stack!");
 
 												} else {
-													stack.remove(stack.size()-1);
+													stack.remove(stack.size()-1); //Otherwise, remove top open tag from stack
 												}
 
+												//If the stack isn't empty, check to see if the top tag is relevant. Set priority accordingly
 												if(stack.size() >= 1){	
 													System.out.println(stack.get(stack.size()-1));
 													if(stack.get(stack.size()-1).equals("TEXT") || stack.get(stack.size()-1).equals("DATE") || stack.get(stack.size()-1).equals("DOC") || stack.get(stack.size()-1).equals("DOCNO") || stack.get(stack.size()-1).equals("HEADLINE") || stack.get(stack.size()-1).equals("LENGTH") || stack.get(stack.size()-1).equals("P")) {
@@ -161,7 +159,6 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 														toOutput = 0;
 													}
 												}
-												
 
 												return new Token(Token.CLOSE, trimmedTag, yyline, yycolumn,tempToOutput); 
 											}									
