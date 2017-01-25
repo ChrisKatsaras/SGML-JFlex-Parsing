@@ -16,6 +16,10 @@ import java.util.*;
 %};
     
 %eofval{
+	//Prints any unmatched open tags to the user when end of file is reached
+	if(!stack.isEmpty()) {
+		System.out.println("Unmatched open tags left are: "+ stack);
+	}
   return null;
 %eofval};
 
@@ -93,7 +97,6 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 														toOutput = 0;
 													}
 												}
-
 												stack.add(trimmedTag); //Push tag to stack
 
 												return new Token(Token.OPEN, trimmedTag, yyline, yycolumn,toOutput); 
@@ -144,7 +147,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 												
 												//If the close tag does not match the top open tag on the stack then report error to user
 												if(!stack.get(stack.size()-1).equals(trimmedTag)) {
-													System.out.println("Close tag does NOT match opening tag on stack!");
+													System.out.println("Open tag does not match closing tag named "+trimmedTag);
 
 												} else {
 													stack.remove(stack.size()-1); //Otherwise, remove top open tag from stack
@@ -152,7 +155,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 
 												//If the stack isn't empty, check to see if the top tag is relevant. Set priority accordingly
 												if(stack.size() >= 1){	
-													System.out.println(stack.get(stack.size()-1));
+													//System.out.println(stack.get(stack.size()-1));
 													if(stack.get(stack.size()-1).equals("TEXT") || stack.get(stack.size()-1).equals("DATE") || stack.get(stack.size()-1).equals("DOC") || stack.get(stack.size()-1).equals("DOCNO") || stack.get(stack.size()-1).equals("HEADLINE") || stack.get(stack.size()-1).equals("LENGTH") || stack.get(stack.size()-1).equals("P")) {
 														toOutput = 1;
 													} else {
@@ -168,4 +171,3 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 {hyphenApostrophized}						{ return new Token(Token.APOSTROPHIZED, yytext(), yyline, yycolumn,toOutput); }
 {hyphen}									{ return new Token(Token.HYPHEN, yytext(), yyline, yycolumn,toOutput); }
 {punctuation}								{ return new Token(Token.PUNCTUATION, yytext(), yyline, yycolumn,toOutput); }
-
