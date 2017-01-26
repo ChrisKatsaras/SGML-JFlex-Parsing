@@ -1,0 +1,10 @@
+A1 CIS*4650
+Christopher Katsaras
+
+The assignment focuses on parsing an SGML file is JFLEX. After tokenizing then file, output matching specification is sent to output.txt. If there are errors in the file (misaligned tags), disregard output in output.txt and look at error.txt to see errors.
+
+type $ make or make all to build project
+
+type $ make clean to remove .class files and Lexer.java
+
+To run, type $java Scanner < nameofinputfile
