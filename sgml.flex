@@ -45,8 +45,8 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 "<"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*">" { 
 
 												int i;
-												int begin=0;
-												int end=0;
+												int begin = 0;
+												int end = 0;
 												String openTag = yytext();
 												String trimmedTag;
 												toOutput = 0;
@@ -105,8 +105,9 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 "</"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*">" {
 
 												int i;
-												int begin=0;
-												int end=0;
+												int begin = 0;
+												int end = 0;
+												int error = 0;
 												int tempToOutput = toOutput;
 												String closeTag = yytext();
 												String trimmedTag;
@@ -148,6 +149,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 												//If the close tag does not match the top open tag on the stack then report error to user
 												if(!stack.get(stack.size()-1).equals(trimmedTag)) {
 													System.out.println("Open tag does not match closing tag named "+trimmedTag);
+													error = 1;
 
 												} else {
 													stack.remove(stack.size()-1); //Otherwise, remove top open tag from stack
@@ -155,7 +157,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 
 												//If the stack isn't empty, check to see if the top tag is relevant. Set priority accordingly
 												if(stack.size() >= 1){	
-													//System.out.println(stack.get(stack.size()-1));
+											
 													if(stack.get(stack.size()-1).equals("TEXT") || stack.get(stack.size()-1).equals("DATE") || stack.get(stack.size()-1).equals("DOC") || stack.get(stack.size()-1).equals("DOCNO") || stack.get(stack.size()-1).equals("HEADLINE") || stack.get(stack.size()-1).equals("LENGTH") || stack.get(stack.size()-1).equals("P")) {
 														toOutput = 1;
 													} else {
@@ -163,7 +165,13 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
 													}
 												}
 
-												return new Token(Token.CLOSE, trimmedTag, yyline, yycolumn,tempToOutput); 
+												//If the close tag did not match the open tag then we must return the error token so we can output to error.txt
+												if(error == 1) {
+													return new Token(Token.ERROR, trimmedTag, yyline, yycolumn, -1);
+												} else {
+													return new Token(Token.CLOSE, trimmedTag, yyline, yycolumn,tempToOutput);
+												}
+												 
 											}									
 {word}										{ return new Token(Token.WORD, yytext(), yyline, yycolumn,toOutput); }
 {number}									{ return new Token(Token.NUMBER, yytext(), yyline, yycolumn,toOutput); }

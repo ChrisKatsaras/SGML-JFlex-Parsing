@@ -7,6 +7,7 @@ class Token {
   public final static int APOSTROPHIZED = 4;
   public final static int HYPHEN = 5;
   public final static int PUNCTUATION = 6;
+  public final static int ERROR = 7;
   
 
   public int m_type;
@@ -38,9 +39,11 @@ class Token {
       case HYPHEN:
         return "HYPHENATED(" + m_value + ")";      
       case PUNCTUATION:
-        return "PUNCTUATION(" + m_value + ")"; 
+        return "PUNCTUATION(" + m_value + ")";
+      case ERROR:
+        return m_value; 
       default:
-        return "UNKNOWN(" + m_value + ")";
+        return m_value;
     }
   }
 }
