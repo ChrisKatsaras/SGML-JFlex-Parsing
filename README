@@ -18,9 +18,15 @@ Assumptions/ limitations
 ************************
 
 1.Tags are assumed to be completed. What is meant by this is, there are not tags partially written like <Doc  or /Doc>
+
 2.If there is an error in the file (due to misalignment) the user must look in the error.txt file to see which close tags did not match
+
 3.If an open tag is has attribute value paris then it must be written like so <name attribute = "value"> Anywhere there are spaces in the example tag will allow as many spaces or newlines as needed. It is important to note that a tag like 
 <name attribut attribute = " value "> would not work but this should not be an issue as this is not even proper tag.
+
+4. The JFLEX library is located at /usr/local/Cellar/jflex/1.6.1/bin/jflex . I have tested this on linux.socs.uoguelph.ca to
+confirm but if for any reason this is not the case on the machine you are running, then this path must be changed.
+
 
 ************
 Testing plan
