@@ -1,3 +1,7 @@
+/*
+  Token.java
+  Token object that associates data 
+ */
 class Token {
 
   public final static int OPEN = 0;

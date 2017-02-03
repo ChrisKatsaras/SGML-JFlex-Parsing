@@ -27,7 +27,7 @@ blankspace = [ |\r|\n|\t]+ //Whitespace
 letter = [a-zA-Z] //Singular upcase or lowercase letter
 digit = [0-9] //Single digit
 word = ({letter}|{digit})*{letter}({letter}|{digit})* //A string of characters and letters e.g mp3 or 123abc
-number = ("-"|"+")?{digit}+("."{digit}+)? //positive or negative real/integers
+number = ("-"|"+")?({digit}+"."{digit}*)|({digit}*"."{digit}+|{digit}+) //positive or negative real/integers
 apostrophized = ({letter}|{digit})+"'"({letter}|{digit})+("'"({letter}|{digit})+)* //Words with apostrophies e.g O'Rielly 
 hyphenApostrophized = (({letter}|{digit})+"-"{apostrophized}|({letter}|{digit})+"-"({letter}|{digit})+"-"{apostrophized}) //Hyphenated words with apostrophies
 hyphen = ({letter}|{digit})+"-"({letter}|{digit})+("-"({letter}|{digit})+)* //Hyphenated words 
@@ -42,7 +42,7 @@ punctuation = [^ \r\n\ta-zA-Z0-9"<"">"] //Anything that does not fall under that
    
 
 {blankspace}	{/*Skip over whitespace*/}
-"<"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*([0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*"="{blankspace}*"\""[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*"\"")?{blankspace}*">" { 
+"<"{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*([0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*"="{blankspace}*"\""{blankspace}*[0-9a-zA-Z"-""_"][0-9a-zA-Z"-""_"]*{blankspace}*"\"")?{blankspace}*">" { 
 
 												int i;
 												int begin = 0;

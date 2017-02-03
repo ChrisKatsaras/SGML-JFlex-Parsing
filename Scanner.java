@@ -15,11 +15,11 @@ public class Scanner {
     try {
       Scanner scanner = new Scanner(new Lexer(new InputStreamReader(System.in)));
       Token tok = null;
-      PrintWriter out = new PrintWriter("output.txt");
+      PrintWriter out = new PrintWriter("output.txt"); //Declares to filewriters. One for regular output and one for error output
       PrintWriter errorOut = new PrintWriter("error.txt");
+
       while( (tok=scanner.getNextToken()) != null ){
-        //System.out.println(tok.m_toOutput);
-        //System.out.println(tok);
+        //If token is relevant, output it to output file. Else if it is an error, output to error file
         if(tok.m_toOutput == 1){
           out.println(tok);
         } else if(tok.m_toOutput == -1) {
@@ -27,7 +27,7 @@ public class Scanner {
           errorOut.println("ERROR! Close tag "+tok+" does not match open tag!");
         }
       }
-      out.close();
+      out.close(); //Closes filewriters
       errorOut.close();
     }
     catch (Exception e) {

@@ -1,4 +1,25 @@
 <DOC>
-<POP>
+123ABC
+mp3
+-0.3
++111
++2.34
+john's O'Reiley world'cup
+father-in-law's
+data-base
+father-in-law
+Hey-Dave-how-is-it-going
+---
+/ + = ''
+
 </DOC>
-</POP>
+
+<chris align = "chris">
+this stuff will not get printed to output
+</chris>
+
+<DATE 
+
+>
+fei song
+</dAtE>
